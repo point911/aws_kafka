@@ -1,0 +1,4 @@
+---
+- name: sansible.users_and_groups
+  src: https://github.com/sansible/users_and_groups
+  version: origin/master

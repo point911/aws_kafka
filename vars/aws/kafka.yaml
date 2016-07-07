@@ -1,0 +1,35 @@
+env:
+  name: "kafka"
+  aws:
+    region: us-west-2
+    security_group:
+      name: kafka_cluster
+      rules:
+        - proto: tcp
+          from_port: 22
+          to_port: 22
+          cidr_ip: 0.0.0.0/0
+        - proto: tcp
+          from_port: 9092
+          to_port: 9092
+          cidr_ip: 0.0.0.0/0
+      rules_egress:
+        - proto: all
+          cidr_ip: "0.0.0.0/0"
+
+    instances:
+      number: "{{ lookup('env','AWS_INSTANCE_NUMBER') if lookup('env','AWS_INSTANCE_NUMBER') != '' else 1 }}"
+      name: "kafka_app"
+      type: t2.medium
+      # Termination by this criteris
+      inventory_group: "{{ lookup('env','AWS_INVENTORY_GROUP') if lookup('env','AWS_INVENTORY_GROUP') != '' else 'kafka_cluster' }}"
+      security_groups: ["kafka_cluster"]
+
+    key:
+      name: kafka_cluster
+
+
+zookeepr_security_group: "{{ lookup('env','AWS_ZOOKEEPER_SECURITY_GROUP') if lookup('env','AWS_ZOOKEEPER_SECURITY_GROUP') != '' else 'zookeeper_cluster' }}"
+
+kafka_server_list: "{{ groups['security_group_'+env.aws.security_group.name]|map('extract', hostvars, 'ec2_private_ip_address')|list }}"
+zookeeper_server_list: "{{ groups['security_group_'+zookeepr_security_group]|map('extract', hostvars, 'ec2_private_ip_address')|list }}"
