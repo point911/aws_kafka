@@ -29,5 +29,3 @@ aws:
 
   region: "{{ env.aws.region }}"
 
-
-

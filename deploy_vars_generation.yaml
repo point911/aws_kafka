@@ -1,0 +1,13 @@
+---
+
+- name: Generate deploy vars file
+  hosts: localhost
+  gather_facts: false
+  connection: local
+
+  vars_files:
+    - vars/aws/kafka.yaml
+    - vars/deploy/kafka.yaml
+
+  roles:
+    - name: community/deploy_config
