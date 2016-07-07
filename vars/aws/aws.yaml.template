@@ -30,13 +30,4 @@ aws:
   region: "{{ env.aws.region }}"
 
 
-kafka:
-  hosts:
-{% for srv in kafka_server_list %}
-    - {{ srv }}:9092
-{% endfor %}
 
-  zookeeper_hosts:
-{% for srv in zookeeper_server_list %}
-    - {{ srv }}:2181
-{% endfor %}
