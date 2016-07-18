@@ -28,6 +28,7 @@
     - vars/aws/kafka.yaml
     - vars/aws/aws.yaml
     - vars/deploy/deploy.yaml
+    - vars/deploy/kafka.yaml
 
   pre_tasks:
     - name: Update apt
@@ -57,6 +58,7 @@
     - vars/aws/kafka.yaml
     - vars/aws/aws.yaml
     - vars/deploy/deploy.yaml
+    - vars/deploy/kafka.yaml
 
   pre_tasks:
     - name: Update apt
