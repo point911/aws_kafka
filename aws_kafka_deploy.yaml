@@ -42,3 +42,27 @@
     - name: community/ssh
     - name: community/java
     - name: community/kafka
+
+
+- name: Install kafka manager
+  hosts:
+    - tag_Name_{{ env.aws.instances.name }}0
+  connection: ssh
+  gather_facts: yes
+  become: yes
+
+  remote_user: ubuntu
+
+  vars_files:
+    - vars/aws/kafka.yaml
+    - vars/aws/aws.yaml
+
+  pre_tasks:
+    - name: Update apt
+      become: yes
+      apt:
+        cache_valid_time: 1800
+        update_cache: yes
+
+  roles:
+    - name: community/kafka_manager

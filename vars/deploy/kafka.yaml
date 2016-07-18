@@ -1,4 +1,31 @@
-zookeepr_security_group: "{{ lookup('env','AWS_ZOOKEEPER_SECURITY_GROUP') if lookup('env','AWS_ZOOKEEPER_SECURITY_GROUP') != '' else 'zookeeper_cluster' }}"
+zookeeper_inventory_group: "{{ lookup('env','AWS_ZOOKEEPER_INVENTORY_GROUP') if lookup('env','AWS_ZOOKEEPER_INVENTORY_GROUP') != '' else 'zookeeper_cluster' }}"
 
 kafka_server_list: "{{ groups['security_group_'+env.aws.security_group.name]|map('extract', hostvars, 'ec2_private_ip_address')|list }}"
-zookeeper_server_list: "{{ groups['security_group_'+zookeepr_security_group]|map('extract', hostvars, 'ec2_private_ip_address')|list }}"
+zookeeper_server_list: "{{ groups['tag_inventory_group_'+zookeeper_inventory_group]|map('extract', hostvars, 'ec2_private_ip_address')|list }}"
+
+
+
+jmx_port: "9999"
+jmx_ip: "{{ ec2_private_ip_address }}"
+
+kafka:
+  listner_ip: "{{ ec2_private_ip_address }}"
+  version_kafka: "0.9.0.1"
+  jmx_opts: "-Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname={{ jmx_ip }} -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.port={{ jmx_port }} -Dcom.sun.management.jmxremote.rmi.port={{ jmx_port }} -Djava.net.preferIPv4Stack=true "
+
+
+
+kafka_manager:
+  installation_type: s3
+  sources_tag: 1.3.0.8
+  zip_path: bin/kafka-manager-1.3.0.8.zip
+  env_vars:
+    ZK_HOSTS: "{{ groups['tag_inventory_group_'+zookeeper_inventory_group]|map('extract', hostvars, 'ec2_private_ip_address')|list|join(',') }}"
+    JMX_PORT: "{{ jmx_port }}"
+
+
+aws:
+  s3:
+    bucket: paltalk-kafka-manager
+    object: kafka-manager-{{ kafka_manager.sources_tag }}.zip
+    download_path: /tmp/kafka-manager.zip
