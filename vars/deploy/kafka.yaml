@@ -3,8 +3,6 @@ zookeeper_inventory_group: "{{ lookup('env','AWS_ZOOKEEPER_INVENTORY_GROUP') if 
 kafka_server_list: "{{ groups['security_group_'+env.aws.security_group.name]|map('extract', hostvars, 'ec2_private_ip_address')|list }}"
 zookeeper_server_list: "{{ groups['tag_inventory_group_'+zookeeper_inventory_group]|map('extract', hostvars, 'ec2_private_ip_address')|list }}"
 
-
-
 jmx_port: "9999"
 jmx_ip: "{{ ec2_private_ip_address }}"
 
@@ -12,7 +10,6 @@ kafka:
   listner_ip: "{{ ec2_private_ip_address }}"
   version_kafka: "0.9.0.1"
   jmx_opts: "-Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname={{ jmx_ip }} -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.port={{ jmx_port }} -Dcom.sun.management.jmxremote.rmi.port={{ jmx_port }} -Djava.net.preferIPv4Stack=true "
-
 
 
 kafka_manager:
