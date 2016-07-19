@@ -13,7 +13,7 @@ env:
           from_port: 9092
           to_port: 9092
           cidr_ip: 0.0.0.0/0
-         - proto: tcp
+        - proto: tcp
           from_port: 9000
           to_port: 9000
           cidr_ip: 0.0.0.0/0
