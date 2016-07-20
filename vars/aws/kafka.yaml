@@ -1,6 +1,6 @@
 inventory_groups:
   kafka_manager: "{{ lookup('env','AWS_KAFKA_MANAGER_INVENTORY_GROUP') if lookup('env','AWS_KAFKA_MANAGER_INVENTORY_GROUP') != '' else 'kafka_manager' }}"
-  kafka: "{{ lookup('env','AWS_KAFKA_INVENTORY_GROUP') if lookup('env','AWS_KAFKA_INVENTORY_GROUP') != '' else 'kafka_cluser' }}"
+  kafka: "{{ lookup('env','AWS_KAFKA_INVENTORY_GROUP') if lookup('env','AWS_KAFKA_INVENTORY_GROUP') != '' else 'kafka_cluster' }}"
 
 env:
   name: "kafka"

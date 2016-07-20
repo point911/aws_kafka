@@ -3,7 +3,7 @@ java:
 
 zookeeper_inventory_group: "{{ lookup('env','AWS_ZOOKEEPER_INVENTORY_GROUP') if lookup('env','AWS_ZOOKEEPER_INVENTORY_GROUP') != '' else 'zookeeper_cluster' }}"
 
-kafka_server_list: "{{ groups['security_group_'+env.aws.security_group.name]|map('extract', hostvars, 'ec2_private_ip_address')|list }}"
+kafka_server_list: "{{ groups['tag_inventory_group_'+inventory_groups.kafka]|map('extract', hostvars, 'ec2_private_ip_address')|list }}"
 zookeeper_server_list: "{{ groups['tag_inventory_group_'+zookeeper_inventory_group]|map('extract', hostvars, 'ec2_private_ip_address')|list }}"
 
 jmx_port: "9999"
