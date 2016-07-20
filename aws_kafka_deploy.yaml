@@ -26,8 +26,8 @@
   vars_files:
     - vars/ssh_users/ssh_users.yaml
     - vars/aws/kafka.yaml
-    - vars/aws/aws.yaml
     - vars/deploy/deploy.yaml
+    - vars/aws/aws.yaml
     - vars/deploy/kafka.yaml
 
   pre_tasks:
@@ -57,8 +57,8 @@
   vars_files:
     - vars/ssh_users/ssh_users.yaml
     - vars/aws/kafka.yaml
-    - vars/aws/aws.yaml
     - vars/deploy/deploy.yaml
+    - vars/aws/aws.yaml
     - vars/deploy/kafka.yaml
 
   pre_tasks:
