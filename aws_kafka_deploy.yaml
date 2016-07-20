@@ -1,6 +1,6 @@
 - name: Wait for become yes
   hosts:
-    - tag_inventory_group_{{ env.aws.instances.inventory_group }}
+    - tag_inventory_group_{{ inventory_groups.kafka }}
   connection: ssh
   gather_facts: yes
   remote_user: ubuntu
@@ -47,7 +47,7 @@
 
 - name: Install kafka manager
   hosts:
-    - tag_Name_{{ env.aws.instances.name }}0
+    - tag_inventory_group_{{ inventory_groups.kafka_manager }}
   connection: ssh
   gather_facts: yes
   become: yes
@@ -55,6 +55,7 @@
   remote_user: ubuntu
 
   vars_files:
+    - vars/ssh_users/ssh_users.yaml
     - vars/aws/kafka.yaml
     - vars/aws/aws.yaml
     - vars/deploy/deploy.yaml
@@ -68,4 +69,6 @@
         update_cache: yes
 
   roles:
+    - name: community/ssh
+    - name: community/java
     - name: community/kafka_manager

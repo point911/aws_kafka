@@ -1,3 +1,7 @@
+inventory_groups:
+  kafka_manager: "{{ lookup('env','AWS_KAFKA_MANAGER_INVENTORY_GROUP') if lookup('env','AWS_KAFKA_MANAGER_INVENTORY_GROUP') != '' else 'kafka_manager' }}"
+  kafka: "{{ lookup('env','AWS_KAFKA_INVENTORY_GROUP') if lookup('env','AWS_KAFKA_INVENTORY_GROUP') != '' else 'kafka_cluser' }}"
+
 env:
   name: "kafka"
   aws:
@@ -21,13 +25,24 @@ env:
         - proto: all
           cidr_ip: "0.0.0.0/0"
 
-    instances:
-      number: "{{ lookup('env','AWS_INSTANCE_NUMBER') if lookup('env','AWS_INSTANCE_NUMBER') != '' else 1 }}"
-      name: "kafka_app"
-      type: t2.medium
-      # Termination by this criteris
-      inventory_group: "{{ lookup('env','AWS_INVENTORY_GROUP') if lookup('env','AWS_INVENTORY_GROUP') != '' else 'kafka_cluster' }}"
-      security_groups: ["kafka_cluster"]
+    groups:
+      - node_type: kafka_manager
+        instances:
+          number: "{{ lookup('env','AWS_KAFKA_MANAGER_INSTANCE_NUMBER') if lookup('env','AWS_KAFKA_MANAGER_INSTANCE_NUMBER') != '' else 0 }}"
+          name: "kafka_manager_app"
+          type: t2.medium
+          # Termination by this criteris
+          inventory_group: "{{ inventory_groups.kafka_manager }}"
+          security_groups: ["kafka_cluster"]
+
+      - node_type: kafka_manager
+        instances:
+          number: "{{ lookup('env','AWS_KAFKA_INSTANCE_NUMBER') if lookup('env','AWS_KAFKA_INSTANCE_NUMBER') != '' else 1 }}"
+          name: "kafka_app"
+          type: t2.medium
+          # Termination by this criteris
+          inventory_group: "{{ inventory_groups.kafka }}"
+          security_groups: ["kafka_cluster"]
 
     key:
       name: kafka_cluster
