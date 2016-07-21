@@ -1,5 +1,4 @@
 inventory_groups:
-  kafka_manager: "{{ lookup('env','AWS_KAFKA_MANAGER_INVENTORY_GROUP') if lookup('env','AWS_KAFKA_MANAGER_INVENTORY_GROUP') != '' else 'kafka_manager' }}"
   kafka: "{{ lookup('env','AWS_KAFKA_INVENTORY_GROUP') if lookup('env','AWS_KAFKA_INVENTORY_GROUP') != '' else 'kafka_cluster' }}"
 
 env:
@@ -17,25 +16,12 @@ env:
           from_port: 9092
           to_port: 9092
           cidr_ip: 0.0.0.0/0
-        - proto: tcp
-          from_port: 9000
-          to_port: 9000
-          cidr_ip: 0.0.0.0/0
       rules_egress:
         - proto: all
           cidr_ip: "0.0.0.0/0"
 
     groups:
-      - node_type: kafka_manager
-        instances:
-          number: "{{ lookup('env','AWS_KAFKA_MANAGER_INSTANCE_NUMBER') if lookup('env','AWS_KAFKA_MANAGER_INSTANCE_NUMBER') != '' else 0 }}"
-          name: "kafka_manager_app"
-          type: t2.medium
-          # Termination by this criteris
-          inventory_group: "{{ inventory_groups.kafka_manager }}"
-          security_groups: ["kafka_cluster"]
-
-      - node_type: kafka_manager
+      - node_type: kafka
         instances:
           number: "{{ lookup('env','AWS_KAFKA_INSTANCE_NUMBER') if lookup('env','AWS_KAFKA_INSTANCE_NUMBER') != '' else 1 }}"
           name: "kafka_app"

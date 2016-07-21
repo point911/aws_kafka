@@ -30,6 +30,7 @@
     - vars/deploy/deploy.yaml
     - vars/aws/aws.yaml
     - vars/deploy/kafka.yaml
+    - metavars.yaml
 
   pre_tasks:
     - name: Update apt
@@ -44,32 +45,3 @@
     - name: community/ssh
     - name: community/java
     - name: community/kafka
-
-
-- name: Install kafka manager
-  hosts:
-    - tag_inventory_group_{{ inventory_groups.kafka_manager }}
-  connection: ssh
-  gather_facts: yes
-  become: yes
-
-  remote_user: ubuntu
-
-  vars_files:
-    - vars/ssh_users/ssh_users.yaml
-    - vars/aws/kafka.yaml
-    - vars/deploy/deploy.yaml
-    - vars/aws/aws.yaml
-    - vars/deploy/kafka.yaml
-
-  pre_tasks:
-    - name: Update apt
-      become: yes
-      apt:
-        cache_valid_time: 1800
-        update_cache: yes
-
-  roles:
-    - name: community/ssh
-    - name: community/java
-    - name: community/kafka_manager

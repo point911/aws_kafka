@@ -15,3 +15,5 @@ aws_get_debug_info.yaml
 
 aws.yaml
 deploy.yaml
+
+metavars.yaml
