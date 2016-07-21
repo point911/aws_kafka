@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+import copy
 import yaml
 import argparse
 import collections
@@ -87,15 +88,25 @@ class KafkaCluster(object):
 
     def generate_broker_ids(self):
         for group, ips in self.metavars.iteritems():
-            max_id = 1  # Do NOT put 0 here
+            def get_new_id(list_ids, c_id):
+                new_id = copy.copy(c_id)
+
+                while new_id in list_ids:
+                    new_id += 1
+
+                return new_id
+
+            curr_id = 1  # Do NOT put 0 here
+            old_ids = []
+
             for ip, ip_meta in ips.iteritems():
                 if ip_meta['broker_id']:
-                    if max_id < int(ip_meta['broker_id']):
-                        max_id = int(ip_meta['broker_id'])
+                    old_ids.append(ip_meta['broker_id'])
                 else:
-                    ip_meta['broker_id'] = max_id
+                    n_id = get_new_id(old_ids, curr_id)
+                    ip_meta['broker_id'] = n_id
                     self.metavars[group].update({ip: ip_meta})
-                max_id += 1
+                    curr_id += 1
 
         self.write_metavars_file(self.metavars)
 
