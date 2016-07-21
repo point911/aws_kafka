@@ -93,6 +93,7 @@ class KafkaCluster(object):
                 if ip_meta['broker_id']:
                     if max_id < int(ip_meta['broker_id']):
                         max_id = int(ip_meta['broker_id'])
+                    max_id += 1
                 else:
                     ip_meta['broker_id'] = max_id
                     self.metavars[group].update({ip: ip_meta})
