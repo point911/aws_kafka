@@ -89,15 +89,13 @@ class KafkaCluster(object):
         for group, ips in self.metavars.iteritems():
             max_id = 1  # Do NOT put 0 here
             for ip, ip_meta in ips.iteritems():
-
                 if ip_meta['broker_id']:
                     if max_id < int(ip_meta['broker_id']):
                         max_id = int(ip_meta['broker_id'])
-                    max_id += 1
                 else:
                     ip_meta['broker_id'] = max_id
                     self.metavars[group].update({ip: ip_meta})
-                    max_id += 1
+                max_id += 1
 
         self.write_metavars_file(self.metavars)
 
