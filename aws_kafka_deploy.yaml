@@ -1,7 +1,6 @@
 - name: Wait for become yes
   hosts:
     - tag_inventory_group_{{ inventory_groups.kafka }}
-    - tag_inventory_group_{{ inventory_groups.kafka_manager }}
   connection: ssh
   gather_facts: yes
   remote_user: ubuntu
