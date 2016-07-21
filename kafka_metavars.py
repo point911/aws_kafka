@@ -87,7 +87,7 @@ class KafkaCluster(object):
 
     def generate_broker_ids(self):
         for group, ips in self.metavars.iteritems():
-            max_id = 0
+            max_id = 22
             for ip, ip_meta in ips.iteritems():
 
                 if ip_meta['broker_id']:
