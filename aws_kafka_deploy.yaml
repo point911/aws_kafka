@@ -29,6 +29,7 @@
     - vars/deploy/deploy.yaml
     - vars/aws/aws.yaml
     - vars/deploy/kafka.yaml
+    - vars/metavars.yaml
 
   pre_tasks:
     - name: Update apt

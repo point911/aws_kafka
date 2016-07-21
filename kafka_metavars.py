@@ -19,6 +19,8 @@ AWS_REGION = os.environ['AWS_REGION']
 MIRRORED_INSTANCES_ERR_MSG = "By convention there should not be presented to " \
                              "instances with same inventory gorup and name"
 
+INSTANCE_DOES_NOT_EXISTS_ERR_MSG = "There is no running instance with {0} tag name and {1} inventory group"
+
 
 class KafkaClusterException(Exception):
     pass
@@ -47,25 +49,23 @@ class KafkaCluster(object):
         meta = collections.defaultdict(dict)
 
         if os.path.exists(METAVARS_PATH) and os.path.isfile(METAVARS_PATH):
-            old_meta = self.read_metavars_file()
+            self.metavars = self.read_metavars_file()
 
             # print old_meta
-            meta.update(old_meta)
+            meta.update(self.metavars)
 
         for instance in self.aws_instances:
-            # print("*"*20)
-            # print(instance['name'])
-            # print(instance['inventory_group'])
             reservations = self.ec2conn.get_all_instances(filters={"tag:Name": instance['name'],
-                                                                   "tag:inventory_group": instance['inventory_group']})
+                                                                   "tag:inventory_group": instance['inventory_group'],
+                                                                   "instance-state-name": "running"})
 
             found_instances = [i for r in reservations for i in r.instances]
 
             if len(found_instances) > 1:
                 raise KafkaClusterException(MIRRORED_INSTANCES_ERR_MSG)
 
-            # print(found_instances[0].private_ip_address)
-
+            if len(found_instances) == 0:
+                raise KafkaClusterException(INSTANCE_DOES_NOT_EXISTS_ERR_MSG.format(instance['name'], instance['inventory_group']))
 
             if str(found_instances[0].private_ip_address) not in meta[instance['inventory_group']]:
                 meta[instance['inventory_group']].update({str(found_instances[0].private_ip_address): {"broker_id": ""}})
@@ -75,29 +75,30 @@ class KafkaCluster(object):
         return meta
 
     def read_metavars_file(self):
-        return self.open_yaml(METAVARS_PATH)
+        return self.open_yaml(METAVARS_PATH)['metavars']
 
     @staticmethod
     def write_metavars_file(meta):
+        write_meta = {}
+        write_meta.update({"metavars": meta})
+
         with open(METAVARS_PATH, 'w') as outfile:
-            outfile.write(yaml.dump(meta, default_flow_style=True))
+            outfile.write(yaml.dump(write_meta, default_flow_style=True))
 
     def generate_broker_ids(self):
-        ids_info = collections.defaultdict(list)
+        for group, ips in self.metavars.iteritems():
+            max_id = 0
+            for ip, ip_meta in ips.iteritems():
 
+                if ip_meta['broker_id']:
+                    if max_id < int(ip_meta['broker_id']):
+                        max_id = int(ip_meta['broker_id'])
+                else:
+                    ip_meta['broker_id'] = max_id
+                    self.metavars[group].update({ip: ip_meta})
+                    max_id += 1
 
-
-        for instance in self.aws_instances:
-            # print(self.metavars[instance['inventory_group']])
-
-            group_broker_list = self.metavars[instance['inventory_group']].values()
-            # print group_broker_list
-            [ids_info[instance['inventory_group']].append(broker['broker_id']) for broker in group_broker_list if 'broker_id' in broker]
-
-        # for ids_list in ids_info.values():
-        #     for br_id
-
-        # print(ids_info)
+        self.write_metavars_file(self.metavars)
 
     def add_nodes(self):
         self.generate_broker_ids()
