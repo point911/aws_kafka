@@ -45,7 +45,7 @@ class AWSConnection(object):
         default_filters = {"instance-state-name": "running"}
         default_filters.update(filters)
 
-        reservations = self.ec2conn.get_all_instances(filters=filters)
+        reservations = self.ec2conn.get_all_instances(filters=default_filters)
 
         return [i for r in reservations for i in r.instances]
 
