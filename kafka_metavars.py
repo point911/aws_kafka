@@ -140,7 +140,9 @@ class KafkaCluster(object):
                 n_id = get_new_id(old_ids, curr_id)
                 descriptor['broker_id'] = n_id
                 self.metavars[self.inventory_group].update({tag_Name: descriptor})
-                curr_id += 1
+
+                curr_id = n_id + 1
+                old_ids.append(n_id)
 
         self.write_metavars_file()
 
