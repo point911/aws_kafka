@@ -18,3 +18,5 @@ deploy.yaml
 
 metavars.yaml
 *~
+
+aws.yaml.backup

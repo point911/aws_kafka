@@ -1,12 +1,12 @@
 inventory_groups:
-  kafka: "{{ lookup('env','AWS_KAFKA_INVENTORY_GROUP') if lookup('env','AWS_KAFKA_INVENTORY_GROUP') != '' else 'kafka_cluster' }}"
+  kafka: "{{ project_name }}"
 
 env:
-  name: "kafka"
+  name: "{{ project_name }}"
   aws:
-    region: us-west-2
+    region: us-east-1
     security_group:
-      name: kafka_cluster
+      name: "{{ project_name }}"
       rules:
         - proto: tcp
           from_port: 22
@@ -23,15 +23,16 @@ env:
     groups:
       - node_type: kafka
         instances:
-          number: "{{ lookup('env','AWS_KAFKA_INSTANCE_NUMBER') if lookup('env','AWS_KAFKA_INSTANCE_NUMBER') != '' else 1 }}"
-          name: "kafka_app"
+          number: 3
+          name: "{{ project_name }}"
           type: t2.medium
-          # Termination by this criteris
+          # Termination by this criteria
           inventory_group: "{{ inventory_groups.kafka }}"
-          security_groups: ["kafka_cluster"]
+          security_groups: ["{{ project_name }}"]
+          vpc_subnet_id: "subnet-79535f51"
 
     key:
-      name: kafka_cluster
+      name: "{{ project_name }}"
 
 
 

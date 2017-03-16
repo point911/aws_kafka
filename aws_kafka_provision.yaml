@@ -3,6 +3,9 @@
   gather_facts: false
   connection: local
 
+  vars:
+    project_name: "kafka_firehose"
+
   vars_files:
     - vars/aws/kafka.yaml
     - vars/aws/aws.yaml

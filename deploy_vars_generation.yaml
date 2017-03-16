@@ -1,9 +1,12 @@
 ---
-
 - name: Generate deploy vars file
   hosts: localhost
   gather_facts: false
   connection: local
+
+  vars:
+    project_name: "kafka_firehose"
+    zookeeper_project_name: "zookeeper_firehose"
 
   vars_files:
     - vars/aws/kafka.yaml
