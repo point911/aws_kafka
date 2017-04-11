@@ -49,6 +49,7 @@
 
   roles:
     - name: community/ssh
+    - name: community/aws_ec2_hostname
     - name: community/java
     - name: community/kafka
 
